@@ -1,0 +1,33 @@
+#JAVA 
+name: CI for java calculator
+
+on:
+  push:
+    branches:
+      - main
+
+jobs: 
+  build: 
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup JAVA
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: 17
+
+      - name: Run tests
+        runs: mvn clean test
+
+      - name: Build package
+        runs: mvn clean package
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with: 
+          name: build-artifact
+          path: target/*.jar
+        
