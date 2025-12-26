@@ -1,0 +1,41 @@
+name: CD for java calculator
+
+on:
+  workflow_run:
+    workflows: ["CI for Java Calculator"]
+    types:
+      - completed
+
+jobs:
+  staging:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    environment: staging
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifact
+          path: ./site
+
+      - name: Deploy to staging
+        run: |
+          echo "Deploying to Staging"
+          ls -l ./site
+
+  production: 
+    needs: staging
+    runs-on : ubuntu-latest
+    environment: production
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifact
+          path: ./site
+
+      - name: Deploy to production
+        run: |
+          echo "Deploying to Production"
+          ls -l ./site
+      
